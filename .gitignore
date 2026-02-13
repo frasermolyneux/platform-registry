@@ -1,0 +1,11 @@
+.terraform/
+.terraform.lock.hcl
+terraform.tfstate
+terraform.tfstate.*
+*.tfstate.backup
+*.tfvars.backup
+*.tfplan
+crash.log
+
+# Shared Copilot configuration checked out during copilot-setup-steps
+.github-copilot/
