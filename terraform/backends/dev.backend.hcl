@@ -1,9 +1,5 @@
-# NOTE: Update resource_group_name and storage_account_name after deploying
-# platform-workloads with the platform-registry workload JSON.
-# These values come from the platform-workloads Terraform output:
-#   workload_terraform_backends["platform-registry"]["Development"]
-resource_group_name  = "PLACEHOLDER-UPDATE-AFTER-PLATFORM-WORKLOADS-DEPLOY"
-storage_account_name = "PLACEHOLDER-UPDATE-AFTER-PLATFORM-WORKLOADS-DEPLOY"
+resource_group_name  = "rg-tf-platform-registry-dev-uksouth-01"
+storage_account_name = "sa51a3686234c8"
 container_name       = "tfstate"
 key                  = "terraform.tfstate"
 use_oidc             = true
