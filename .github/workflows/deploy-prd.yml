@@ -211,11 +211,6 @@ jobs:
 
             # Publish to ACR
             echo "Publishing $MODULE v$VERSION to ACR $ACR_NAME"
-            pwsh ./scripts/Publish-BicepModuleToAcr.ps1 \
-              -moduleName "$MODULE" \
-              -modulesRootPath ./modules \
-              -acrName "$ACR_NAME" \
-              -version "$VERSION" \
-              -previewRelease $false
+            pwsh -Command "./scripts/Publish-BicepModuleToAcr.ps1 -moduleName '$MODULE' -modulesRootPath ./modules -acrName '$ACR_NAME' -version '$VERSION' -previewRelease \$false"
 
           done
