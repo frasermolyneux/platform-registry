@@ -5,6 +5,11 @@ on:
     branches:
       - main
   workflow_dispatch:
+    inputs:
+      publish_all_modules:
+        description: "Publish all modules regardless of changes"
+        type: boolean
+        default: true
   schedule:
     - cron: "0 3 * * 4"
 
@@ -82,10 +87,10 @@ jobs:
           subscription-id: ${{ vars.AZURE_SUBSCRIPTION_ID }}
           tenant-id: ${{ vars.AZURE_TENANT_ID }}
 
-      - name: Resolve ACR name from Terraform output
+      - name: Resolve ACR name
         id: acr
         run: |
-          ACR_NAME=$(az acr list --resource-group "$(az group list --query "[?tags.Workload=='platform-registry' && tags.Environment=='prd'] | [0].name" -o tsv)" --query "[0].name" -o tsv)
+          ACR_NAME=$(az acr list --resource-group "rg-platform-registry-prd-uksouth" --query "[0].name" -o tsv)
           echo "acr_name=$ACR_NAME" >> "$GITHUB_OUTPUT"
           echo "Resolved ACR: $ACR_NAME"
 
@@ -93,6 +98,7 @@ jobs:
         shell: bash
         env:
           ACR_NAME: ${{ steps.acr.outputs.acr_name }}
+          PUBLISH_ALL: ${{ github.event_name == 'workflow_dispatch' && inputs.publish_all_modules == true || github.event_name == 'schedule' }}
         run: |
           set -euo pipefail
           export PATH="$PATH:$HOME/.dotnet/tools"
@@ -113,16 +119,21 @@ jobs:
             webTest
           )
 
-          BEFORE="${{ github.event.before }}"
-          if [[ "$BEFORE" == "0000000000000000000000000000000000000000" ]]; then
-            BEFORE=$(git rev-list --max-parents=0 HEAD)
+          if [[ "$PUBLISH_ALL" == "true" ]]; then
+            echo "Publishing all modules (triggered by ${{ github.event_name }})"
+          else
+            BEFORE="${{ github.event.before }}"
+            if [[ "$BEFORE" == "0000000000000000000000000000000000000000" ]]; then
+              BEFORE=$(git rev-list --max-parents=0 HEAD)
+            fi
+            CHANGED=$(git diff --name-only "$BEFORE" "${{ github.sha }}")
           fi
 
-          CHANGED=$(git diff --name-only "$BEFORE" "${{ github.sha }}")
-
           for MODULE in "${MODULES[@]}"; do
-            if ! echo "$CHANGED" | grep -q "^modules/${MODULE}/"; then
-              continue
+            if [[ "$PUBLISH_ALL" != "true" ]]; then
+              if ! echo "$CHANGED" | grep -q "^modules/${MODULE}/"; then
+                continue
+              fi
             fi
 
             echo "========================================"
