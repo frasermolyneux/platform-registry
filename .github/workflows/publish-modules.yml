@@ -26,7 +26,7 @@ jobs:
           fetch-tags: true
 
       - name: Setup Bicep CLI
-        uses: Azure/setup-bicep@v2
+        run: az bicep install
 
       - name: Install Nerdbank.GitVersioning
         run: |
