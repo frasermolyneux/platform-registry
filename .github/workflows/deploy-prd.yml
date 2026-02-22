@@ -11,7 +11,7 @@ on:
         type: boolean
         default: true
   schedule:
-    - cron: "0 3 * * 4"
+    - cron: "0 4 * * 5"
 
 permissions: {}
 
@@ -40,7 +40,7 @@ jobs:
       id-token: write
     environment: Development
     needs: detect-changes
-    if: needs.detect-changes.outputs.terraform == 'true'
+    if: github.event_name != 'schedule' && needs.detect-changes.outputs.terraform == 'true'
     runs-on: ubuntu-latest
     concurrency:
       group: ${{ github.repository }}-dev
