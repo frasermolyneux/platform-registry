@@ -82,6 +82,7 @@ jobs:
     permissions:
       contents: write
       id-token: write
+      workflows: write
     environment: Production
     needs:
       - detect-changes
