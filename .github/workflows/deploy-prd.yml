@@ -143,7 +143,7 @@ jobs:
 
             if [[ "$force" == "true" ]]; then
               if gh api "repos/${GITHUB_REPOSITORY}/git/refs/tags/${tag_name}" \
-                   --method PATCH -f sha="${GITHUB_SHA}" -f force=true > /dev/null 2>&1; then
+                   --method PATCH -f sha="${GITHUB_SHA}" -F force=true > /dev/null 2>&1; then
                 return 0
               fi
             fi
