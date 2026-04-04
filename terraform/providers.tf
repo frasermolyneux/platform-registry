@@ -6,13 +6,17 @@ terraform {
       source  = "hashicorp/azurerm"
       version = "~> 4.66.0"
     }
+    azuread = {
+      source  = "hashicorp/azuread"
+      version = "~> 3.8.0"
+    }
   }
 
   backend "azurerm" {}
 }
 
 provider "azurerm" {
-  subscription_id                 = var.subscription_id
+  subscription_id = var.subscription_id
 
   features {
     resource_group {

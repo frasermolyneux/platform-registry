@@ -11,6 +11,14 @@ platform_workloads_state = {
   tenant_id            = "e56a6947-bb9a-4a6e-846a-1f118d1c3a14"
 }
 
+acr_consumers = [
+  {
+    workload      = "portal-server-agent-dev"
+    identity_name = "id-portal-server-agent-dev"
+    role          = "AcrPull"
+  }
+]
+
 tags = {
   Environment = "dev"
   Workload    = "platform-registry"

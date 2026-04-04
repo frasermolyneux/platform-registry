@@ -39,6 +39,16 @@ variable "acr_sku" {
   default     = "Basic"
 }
 
+variable "acr_consumers" {
+  description = "External consumers that need access to the container registry, resolved by managed identity display name."
+  type = list(object({
+    workload      = string
+    identity_name = string
+    role          = string
+  }))
+  default = []
+}
+
 variable "tags" {
   description = "Optional resource tags"
   type        = map(string)
