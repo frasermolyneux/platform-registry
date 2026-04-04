@@ -88,7 +88,11 @@ jobs:
       - terraform-plan-and-apply-prd
     if: |
       !failure() && !cancelled() &&
-      needs.detect-changes.outputs.modules == 'true'
+      (
+        needs.detect-changes.outputs.modules == 'true' ||
+        (github.event_name == 'workflow_dispatch' && inputs.publish_all_modules == true) ||
+        github.event_name == 'schedule'
+      )
     runs-on: ubuntu-latest
     concurrency:
       group: ${{ github.repository }}-publish
@@ -153,7 +157,12 @@ jobs:
             if [[ "$BEFORE" == "0000000000000000000000000000000000000000" ]]; then
               BEFORE=$(git rev-list --max-parents=0 HEAD)
             fi
-            CHANGED=$(git diff --name-only "$BEFORE" "${{ github.sha }}")
+            if [[ -z "$BEFORE" ]]; then
+              echo "No base commit available (event: ${{ github.event_name }}). Falling back to publishing all modules."
+              PUBLISH_ALL="true"
+            else
+              CHANGED=$(git diff --name-only "$BEFORE" "${{ github.sha }}")
+            fi
           fi
 
           for MODULE in "${MODULES[@]}"; do
