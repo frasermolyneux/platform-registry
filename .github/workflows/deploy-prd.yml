@@ -112,7 +112,7 @@ jobs:
           echo "PATH=$PATH:$HOME/.dotnet/tools" >> $GITHUB_ENV
 
       - name: Az CLI Login
-        uses: azure/login@v2
+        uses: azure/login@v3
         with:
           client-id: ${{ vars.AZURE_CLIENT_ID }}
           subscription-id: ${{ vars.AZURE_SUBSCRIPTION_ID }}
