@@ -82,7 +82,6 @@ jobs:
     permissions:
       contents: write
       id-token: write
-      workflows: write
     environment: Production
     needs:
       - detect-changes
@@ -90,7 +89,7 @@ jobs:
     if: |
       !failure() && !cancelled() &&
       (
-        needs.detect-changes.outputs.modules == 'true' ||
+        (github.event_name == 'push' && needs.detect-changes.outputs.modules == 'true') ||
         (github.event_name == 'workflow_dispatch' && inputs.publish_all_modules == true) ||
         github.event_name == 'schedule'
       )
@@ -131,9 +130,27 @@ jobs:
         env:
           ACR_NAME: ${{ steps.acr.outputs.acr_name }}
           PUBLISH_ALL: ${{ github.event_name == 'workflow_dispatch' && inputs.publish_all_modules == true || github.event_name == 'schedule' }}
+          GH_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
           export PATH="$PATH:$HOME/.dotnet/tools"
+
+          # Use GitHub API for tag operations to avoid GITHUB_TOKEN limitation
+          # where git push is rejected for commits that modify workflow files.
+          push_tag() {
+            local tag_name="$1"
+            local force="${2:-false}"
+
+            if [[ "$force" == "true" ]]; then
+              if gh api "repos/${GITHUB_REPOSITORY}/git/refs/tags/${tag_name}" \
+                   --method PATCH -f sha="${GITHUB_SHA}" -f force=true > /dev/null 2>&1; then
+                return 0
+              fi
+            fi
+
+            gh api "repos/${GITHUB_REPOSITORY}/git/refs" \
+              --method POST -f ref="refs/tags/${tag_name}" -f sha="${GITHUB_SHA}" > /dev/null
+          }
 
           MODULES=(
             apiManagementLogger
@@ -230,7 +247,7 @@ jobs:
               VERSION="${MAJOR_MINOR}.${NEXT_PATCH}"
               PATCH_TAG="${MODULE}/v${VERSION}"
               git tag "$PATCH_TAG"
-              git push origin "$PATCH_TAG"
+              push_tag "$PATCH_TAG"
               echo "Published git tag $PATCH_TAG"
             fi
 
@@ -239,11 +256,11 @@ jobs:
             MINOR_TAG="${MODULE}/v${MAJOR_MINOR}"
 
             git tag -f "$MAJOR_TAG"
-            git push --force origin "$MAJOR_TAG"
+            push_tag "$MAJOR_TAG" true
             echo "Updated rolling git tag $MAJOR_TAG"
 
             git tag -f "$MINOR_TAG"
-            git push --force origin "$MINOR_TAG"
+            push_tag "$MINOR_TAG" true
             echo "Updated rolling git tag $MINOR_TAG"
 
             # Publish to ACR
