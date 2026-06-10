@@ -67,3 +67,12 @@ cd terraform
 terraform init -backend-config="backends/dev.backend.hcl"
 terraform plan -var-file="tfvars/dev.tfvars"
 ```
+
+## Local dev: MCP wire-up
+
+This repo wires the `frasermolyneux-copilot` MCP server so the GitHub Copilot coding agent (and any MCP-capable client) can query the shared org catalog (`frasermolyneux/.github-copilot`) for instructions, prompts, and agents.
+
+- Coding-agent config: `.github/copilot/mcp_config.json` (loaded by `copilot-setup-steps.yml`, which checks out `.github-copilot/` at the pinned tag and builds the MCP server).
+- Local VS Code / Copilot CLI: point your client at the same `node .github-copilot/mcp-server/dist/index.js` entry, or use the repo-local `.vscode/mcp.json` once added.
+
+See [`.github-copilot/mcp-server/README.md`](https://github.com/frasermolyneux/.github-copilot/blob/main/mcp-server/README.md) in the catalog repo for the tool surface, content-root resolution, and client-specific wire-up snippets.
