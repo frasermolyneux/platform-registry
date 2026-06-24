@@ -1,69 +1,25 @@
 # platform-registry
 
-Shared Azure Container Registry for platform Bicep modules, provisioned with Terraform and published via GitHub Actions.
+[![Build and Test](https://github.com/frasermolyneux/platform-registry/actions/workflows/build-and-test.yml/badge.svg)](https://github.com/frasermolyneux/platform-registry/actions/workflows/build-and-test.yml)
+[![Code Quality](https://github.com/frasermolyneux/platform-registry/actions/workflows/codequality.yml/badge.svg)](https://github.com/frasermolyneux/platform-registry/actions/workflows/codequality.yml)
+[![Dependabot Auto-Merge](https://github.com/frasermolyneux/platform-registry/actions/workflows/dependabot-automerge.yml/badge.svg)](https://github.com/frasermolyneux/platform-registry/actions/workflows/dependabot-automerge.yml)
+[![Deploy Dev](https://github.com/frasermolyneux/platform-registry/actions/workflows/deploy-dev.yml/badge.svg)](https://github.com/frasermolyneux/platform-registry/actions/workflows/deploy-dev.yml)
+[![Deploy Prd](https://github.com/frasermolyneux/platform-registry/actions/workflows/deploy-prd.yml/badge.svg)](https://github.com/frasermolyneux/platform-registry/actions/workflows/deploy-prd.yml)
+[![Destroy Environment](https://github.com/frasermolyneux/platform-registry/actions/workflows/destroy-environment.yml/badge.svg)](https://github.com/frasermolyneux/platform-registry/actions/workflows/destroy-environment.yml)
+[![PR Verify](https://github.com/frasermolyneux/platform-registry/actions/workflows/pr-verify.yml/badge.svg)](https://github.com/frasermolyneux/platform-registry/actions/workflows/pr-verify.yml)
+
+## Documentation
+
+Documentation is being expanded in the docs folder.
 
 ## Overview
 
-This repository manages:
+This repository provisions and manages the shared Azure Container Registry used for platform Bicep modules. Terraform defines and deploys the registry infrastructure, while module publishing is handled by GitHub Actions workflows. Module versioning is driven by Nerdbank.GitVersioning with per-module version scopes. The stack acts as a central module registry for downstream infrastructure repositories.
 
-1. **Azure Container Registry (ACR)** — deployed via Terraform to host reusable Bicep modules.
-2. **Bicep Modules** — a catalogue of reusable Azure Bicep modules published to ACR with NerdBank GitVersioning.
+## Contributing
 
-## Repository Layout
+Please read the [contributing](CONTRIBUTING.md) guidance; this is a learning and development project.
 
-- `terraform/` — Terraform configuration for ACR infrastructure (providers, variables, tfvars, backends).
-- `modules/` — Bicep modules, each containing `main.bicep` and `version.json` (NerdBank GitVersioning).
-- `scripts/` — Utility scripts including the ACR publish script.
-- `.github/workflows/` — GitHub Actions CI/CD pipelines.
+## Security
 
-## Bicep Modules
-
-| Module | Description |
-|---|---|
-| `apiManagementLogger` | API Management diagnostic logger |
-| `apiManagementSubscription` | API Management subscription |
-| `appConfigurationStore` | App Configuration store |
-| `appInsights` | Application Insights instance |
-| `frontDoorCNAME` | Front Door CNAME record |
-| `frontDoorEndpoint` | Front Door endpoint |
-| `keyVault` | Key Vault |
-| `keyVaultAccessPolicy` | Key Vault access policy |
-| `keyVaultRoleAssignment` | Key Vault role assignment |
-| `keyVaultSecret` | Key Vault secret |
-| `sqlDatabase` | SQL Database |
-| `storageAccount` | Storage Account |
-| `webTest` | Application Insights web test |
-
-## Versioning
-
-Modules are versioned using [NerdBank GitVersioning](https://github.com/dotnet/Nerdbank.GitVersioning). Each module has its own `version.json` with `pathFilters` scoped to its folder. Version height is computed from git commit history.
-
-On push to `main`, the `publish-modules.yml` workflow:
-1. Detects which module folders changed.
-2. Resolves the version via `nbgv get-version`.
-3. Creates git tags (`{module}/v{X.Y.Z}`, rolling `{module}/v{X.Y}`, `{module}/v{X}`).
-4. Publishes to ACR with tags: `V{X.Y.Z}`, `V{X}.x`, `V{X.Y}.x`, and `latest`.
-
-## CI/CD Workflows
-
-| Workflow | Trigger | Purpose |
-|---|---|---|
-| `deploy-prd.yml` | Push to main, schedule, manual | Terraform plan+apply dev → prd |
-| `deploy-dev.yml` | Manual dispatch | Terraform plan+apply dev only |
-| `publish-modules.yml` | Push to main (modules changed) | Publish Bicep modules to ACR |
-| `pr-verify.yml` | Pull requests | Bicep validation + Terraform plan |
-| `build-and-test.yml` | Feature/bugfix/hotfix branches | Bicep validation + Terraform plan |
-| `codequality.yml` | Push to main, PRs, weekly schedule | Security scanning + dependency review |
-| `dependabot-automerge.yml` | Dependabot PRs | Auto-merge dependency updates |
-
-## Local Development
-
-```bash
-# Validate Bicep modules
-for module in modules/*/main.bicep; do az bicep build --file "$module"; done
-
-# Terraform init and plan
-cd terraform
-terraform init -backend-config="backends/dev.backend.hcl"
-terraform plan -var-file="tfvars/dev.tfvars"
-```
+Please read the [security](SECURITY.md) guidance; I am always open to security feedback through email or opening an issue.
