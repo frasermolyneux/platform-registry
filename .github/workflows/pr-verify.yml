@@ -36,7 +36,11 @@ jobs:
       contents: read
       id-token: write
       pull-requests: write
-    if: github.event.pull_request.draft == false && !contains(github.event.pull_request.labels.*.name, 'deploy-dev') && contains(fromJson('["opened","synchronize","reopened","ready_for_review"]'), github.event.action)
+    # Runs on every non-deploy-dev PR event (including labeled/unlabeled) so this
+    # required status check always reports a conclusion. Restricting it to
+    # opened/synchronize/reopened left it "skipped" on Dependabot label events,
+    # which the branch ruleset treats as unsatisfied and blocks the PR.
+    if: github.event.pull_request.draft == false && (!contains(github.event.pull_request.labels.*.name, 'deploy-dev') || github.event.pull_request.user.login == 'dependabot[bot]')
     needs: bicep-validation
     environment: Development
     runs-on: ubuntu-latest
