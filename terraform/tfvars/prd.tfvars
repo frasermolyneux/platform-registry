@@ -16,6 +16,16 @@ acr_consumers = [
     workload      = "portal-server-agent-prd"
     identity_name = "id-portal-server-agent-prd"
     role          = "AcrPull"
+  },
+  {
+    workload      = "portal-server-agent-dev"
+    identity_name = "id-portal-server-agent-dev"
+    role          = "AcrPull"
+  },
+  {
+    workload      = "portal-server-agent-dev-deployment"
+    identity_name = "spn-portal-server-agent-development"
+    role          = "AcrPush"
   }
 ]
 
