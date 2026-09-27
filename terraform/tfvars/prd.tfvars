@@ -29,6 +29,22 @@ acr_consumers = [
   }
 ]
 
+workload_acr_consumers = [
+  {
+    name          = "baremetal-workload-canary-publisher"
+    identity_name = "spn-baremetal-workload-canary-production"
+    role          = "Container Registry Repository Writer"
+    repository    = "workloads/baremetal-workload-canary"
+  },
+  {
+    name          = "ns5019527-workload-puller"
+    identity_name = "ns5019527"
+    role          = "Container Registry Repository Reader"
+    repository    = "workloads/"
+    match         = "prefix"
+  }
+]
+
 tags = {
   Environment = "prd"
   Workload    = "platform-registry"

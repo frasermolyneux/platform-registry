@@ -26,6 +26,19 @@ The production registry is intentionally shared with `portal-server-agent` devel
 
 This repository's Terraform grants `AcrPull` to the production and development Container App managed identities and grants `AcrPush` to the `portal-server-agent` Development GitHub Actions OIDC principal at the registry scope only. `platform-workloads` separately grants that development principal `Storage Blob Data Reader` on the production platform-registry Terraform state so it can consume the registry output.
 
+## Workload image registry
+
+The stack also provisions a separate ACR for repository-owned bare-metal
+workload images. It is created in `AbacRepositoryPermissions` mode so workload
+OIDC identities can publish only to their assigned `workloads/<workload>`
+repository. Hosting Arc managed identities receive read access to the
+`workloads/` prefix and authenticate with short-lived managed-identity tokens;
+registry credentials and GitHub PATs are not used.
+
+The workload image registry is deliberately separate from the existing Bicep
+module and portal image registry. This allows repository-scoped authorization
+without changing the legacy role mode used by current consumers.
+
 The `Destroy Development` workflow is hard-coded to the development backend and tfvars. It runs nightly at 23:55 UTC, after the application teardown window used across the estate, and retains manual dispatch.
 
 ## Contributing
