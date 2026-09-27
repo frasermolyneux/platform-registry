@@ -16,6 +16,5 @@ locals {
     Workload    = var.workload_name,
   }, var.tags)
 
-  acr_name          = "acr${random_id.acr.hex}"
-  workload_acr_name = "acrw${random_id.workload_acr.hex}"
+  acr_name = "acr${random_id.acr.hex}"
 }

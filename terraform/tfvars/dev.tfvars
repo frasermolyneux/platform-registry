@@ -19,8 +19,6 @@ acr_consumers = [
   }
 ]
 
-workload_acr_consumers = []
-
 tags = {
   Environment = "dev"
   Workload    = "platform-registry"
