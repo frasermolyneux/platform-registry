@@ -26,6 +26,16 @@ acr_consumers = [
     workload      = "portal-server-agent-dev-deployment"
     identity_name = "spn-portal-server-agent-development"
     role          = "AcrPush"
+  },
+  {
+    workload      = "baremetal-workload-canary-publisher"
+    identity_name = "spn-baremetal-workload-canary-production"
+    role          = "AcrPush"
+  },
+  {
+    workload      = "ns5019527-workload-puller"
+    identity_name = "ns5019527"
+    role          = "AcrPull"
   }
 ]
 

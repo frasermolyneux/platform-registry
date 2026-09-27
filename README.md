@@ -26,6 +26,13 @@ The production registry is intentionally shared with `portal-server-agent` devel
 
 This repository's Terraform grants `AcrPull` to the production and development Container App managed identities and grants `AcrPush` to the `portal-server-agent` Development GitHub Actions OIDC principal at the registry scope only. `platform-workloads` separately grants that development principal `Storage Blob Data Reader` on the production platform-registry Terraform state so it can consume the registry output.
 
+The registry also stores repository-owned bare-metal workload images under the
+`workloads/` prefix. Workload GitHub OIDC identities receive `AcrPush`, and
+hosting Arc managed identities receive `AcrPull`. These legacy roles apply to
+the whole registry; immutable digest promotion and platform policy remain the
+boundary preventing a workload repository from selecting unreviewed images.
+Registry credentials and GitHub PATs are not used.
+
 The `Destroy Development` workflow is hard-coded to the development backend and tfvars. It runs nightly at 23:55 UTC, after the application teardown window used across the estate, and retains manual dispatch.
 
 ## Contributing
