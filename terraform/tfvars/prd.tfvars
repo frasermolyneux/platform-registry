@@ -28,11 +28,6 @@ acr_consumers = [
     role          = "AcrPush"
   },
   {
-    workload      = "baremetal-workload-canary-publisher"
-    identity_name = "spn-baremetal-workload-canary-production"
-    role          = "AcrPush"
-  },
-  {
     workload      = "xi-powerball-publisher"
     identity_name = "spn-xi-powerball-production"
     role          = "AcrPush"
