@@ -38,6 +38,11 @@ acr_consumers = [
     role          = "AcrPush"
   },
   {
+    workload      = "xi-freezetag-stats-publisher"
+    identity_name = "spn-xi-freezetag-stats-production"
+    role          = "AcrPush"
+  },
+  {
     workload      = "ns5019527-workload-puller"
     identity_name = "ns5019527"
     role          = "AcrPull"
