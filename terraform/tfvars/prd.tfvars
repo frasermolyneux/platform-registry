@@ -48,6 +48,11 @@ acr_consumers = [
     role          = "AcrPush"
   },
   {
+    workload      = "baremetal-workload-template-publisher"
+    identity_name = "spn-baremetal-workload-template-production"
+    role          = "AcrPush"
+  },
+  {
     workload      = "ns5019527-workload-puller"
     identity_name = "ns5019527"
     role          = "AcrPull"
