@@ -53,6 +53,11 @@ acr_consumers = [
     role          = "AcrPush"
   },
   {
+    workload      = "xi-bank-publisher"
+    identity_name = "spn-xi-bank-production"
+    role          = "AcrPush"
+  },
+  {
     workload      = "baremetal-workload-template-publisher"
     identity_name = "spn-baremetal-workload-template-production"
     role          = "AcrPush"
