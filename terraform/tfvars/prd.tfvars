@@ -63,6 +63,16 @@ acr_consumers = [
     role          = "AcrPush"
   },
   {
+    workload      = "platform-status-web-publisher"
+    identity_name = "spn-platform-status-web-production"
+    role          = "AcrPush"
+  },
+  {
+    workload      = "ns346663-workload-puller"
+    identity_name = "ns346663"
+    role          = "AcrPull"
+  },
+  {
     workload      = "ns5019527-workload-puller"
     identity_name = "ns5019527"
     role          = "AcrPull"
