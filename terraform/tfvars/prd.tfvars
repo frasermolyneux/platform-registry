@@ -58,6 +58,11 @@ acr_consumers = [
     role          = "AcrPush"
   },
   {
+    workload      = "xi-redirect-manager-publisher"
+    identity_name = "spn-xi-redirect-manager-production"
+    role          = "AcrPush"
+  },
+  {
     workload      = "baremetal-workload-template-publisher"
     identity_name = "spn-baremetal-workload-template-production"
     role          = "AcrPush"
