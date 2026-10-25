@@ -13,7 +13,7 @@
 - `modules/*/version.json` controls NerdBank.GitVersioning for each module.
 - `scripts/Publish-BicepModuleToAcr.ps1` and `.github/workflows/` implement publication.
 
-Terraform requires `>= 1.15.6`. Provider constraints in `terraform/providers.tf` are AzureRM `~> 5.2.0` and AzureAD `~> 3.9.0`; do not change them during unrelated work.
+CLI compatibility and provider constraints are authoritative in `terraform/providers.tf`; exact selections come from the committed root CLI pin and provider lock. Do not change these constraints during unrelated work.
 
 Module versions come from NerdBank.GitVersioning and git history. Do not introduce `metadata.json`. Change a module's `version.json` only for an intentional major or minor version decision.
 
@@ -25,14 +25,14 @@ For Terraform changes:
 
 ```pwsh
 terraform -chdir=terraform fmt -check -recursive
-terraform -chdir=terraform init -backend=false -upgrade
+terraform -chdir=terraform init -backend=false -lockfile=readonly
 terraform -chdir=terraform validate
 ```
 
 Run a state-backed plan only for registry infrastructure changes:
 
 ```pwsh
-terraform -chdir=terraform init -reconfigure -backend-config=backends/dev.backend.hcl
+terraform -chdir=terraform init -lockfile=readonly -reconfigure -backend-config=backends/dev.backend.hcl
 terraform -chdir=terraform plan -var-file=tfvars/dev.tfvars
 ```
 
@@ -51,6 +51,6 @@ az bicep build --file modules/<name>/main.bicep
 - Treat ACR deletion, SKU, retention, networking, role assignment, and publication changes as consumer-impacting.
 - Do not apply, import, move, or remove state unless explicitly requested.
 - Use OIDC or managed identity; never add client secrets, registry credentials, tokens, or connection strings.
-- `.terraform.lock.hcl` is generated locally, ignored, and never committed.
+- Commit each root's `.terraform-version` and `.terraform.lock.hcl`. Select the exact root CLI pin before invoking Terraform; normal initialization uses `-lockfile=readonly`. Regenerate provider selections only in a reviewed dependency-update PR; never commit state, plans, or `.terraform/`.
 
 Repository overview and consumer context are in [README.md](../README.md).
