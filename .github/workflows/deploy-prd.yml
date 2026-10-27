@@ -25,6 +25,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       terraform: ${{ steps.changes.outputs.terraform }}
+      terraform_dev: ${{ steps.dev-changes.outputs.terraform }}
       modules: ${{ steps.changes.outputs.modules }}
     steps:
       - id: changes
@@ -33,6 +34,12 @@ jobs:
           filters: |
             terraform:terraform/**
             modules:modules/**
+      - id: dev-changes
+        uses: frasermolyneux/actions/detect-changes@detect-changes/v1.0
+        with:
+          perform-checkout: "false"
+          filters: |
+            terraform:terraform/*.tf,terraform/**/*.tf,terraform/*.tf.json,terraform/**/*.tf.json,terraform/backends/dev.backend.hcl,terraform/tfvars/dev.tfvars,terraform/.terraform-version,terraform/.terraform.lock.hcl
 
   terraform-plan-and-apply-dev:
     permissions:
@@ -40,7 +47,7 @@ jobs:
       id-token: write
     environment: Development
     needs: detect-changes
-    if: github.event_name != 'schedule' && needs.detect-changes.outputs.terraform == 'true'
+    if: github.event_name != 'schedule' && needs.detect-changes.outputs.terraform_dev == 'true'
     runs-on: ubuntu-latest
     concurrency:
       group: ${{ github.repository }}-dev

@@ -73,6 +73,16 @@ acr_consumers = [
     role          = "AcrPush"
   },
   {
+    workload      = "trip-side-kick-publisher"
+    identity_name = "spn-trip-side-kick-production"
+    role          = "AcrPush"
+  },
+  {
+    workload      = "talkwithtiles-publisher"
+    identity_name = "spn-talkwithtiles-production"
+    role          = "AcrPush"
+  },
+  {
     workload      = "ns346663-workload-puller"
     identity_name = "ns346663"
     role          = "AcrPull"
