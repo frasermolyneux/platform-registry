@@ -21,6 +21,7 @@ param tags object
 
 // Module Resources
 resource storageAccount 'Microsoft.Storage/storageAccounts@2022-09-01' = {
+  // checkov:skip=CKV_AZURE_43:The generated name uses only the valid "sa" prefix and uniqueString output; Checkov cannot evaluate the expression.
   name: !empty(storageAccountName) ? storageAccountName : 'sa${uniqueString(resourceGroup().id, workload, environment)}'
   location: location
   kind: 'StorageV2'
@@ -34,6 +35,10 @@ resource storageAccount 'Microsoft.Storage/storageAccounts@2022-09-01' = {
     minimumTlsVersion: 'TLS1_2'
     supportsHttpsTrafficOnly: true
     allowBlobPublicAccess: false
+    networkAcls: {
+      bypass: 'AzureServices'
+      defaultAction: 'Deny'
+    }
   }
 }
 
