@@ -33,6 +33,7 @@ param tags object
 
 // Module Resources
 resource keyVault 'Microsoft.KeyVault/vaults@2021-11-01-preview' = {
+  // checkov:skip=CKV_AZURE_42:Soft delete is always enabled for this API and purge protection is explicitly enabled; Checkov expects the retired enableSoftDelete property.
   name: !empty(keyVaultName) ? keyVaultName : 'kv${uniqueString(resourceGroup().id, workload, environment)}-${location}'
   location: location
   tags: tags
@@ -48,7 +49,7 @@ resource keyVault 'Microsoft.KeyVault/vaults@2021-11-01-preview' = {
 
     networkAcls: {
       bypass: 'AzureServices'
-      defaultAction: 'Allow'
+      defaultAction: 'Deny'
     }
 
     sku: {
