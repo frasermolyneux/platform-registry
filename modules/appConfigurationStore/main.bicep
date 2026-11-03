@@ -29,7 +29,7 @@ resource configurationStore 'Microsoft.AppConfiguration/configurationStores@2022
   }
 
   properties: {
-    disableLocalAuth: false
+    disableLocalAuth: true
     enablePurgeProtection: true
     encryption: {}
     softDeleteRetentionInDays: 30

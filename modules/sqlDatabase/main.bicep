@@ -32,6 +32,8 @@ resource sqlServer 'Microsoft.Sql/servers@2021-11-01-preview' existing = {
 
 // Module Resources
 resource sqlDatabase 'Microsoft.Sql/servers/databases@2021-11-01-preview' = {
+  // checkov:skip=CKV_AZURE_26:Server alert recipients are configured by the module that owns the parent SQL server.
+  // checkov:skip=CKV_AZURE_27:Server administrator alert settings are configured by the module that owns the parent SQL server.
   parent: sqlServer
   name: databaseName
   location: location
